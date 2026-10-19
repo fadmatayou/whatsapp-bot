@@ -1,35 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <title>LinguaBot - تعلم مع الذكاء الاصطناعي</title>
-  <!-- Google Ads Tag - بدل G-XXXX ب ID ديالك -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-XXXXXXXX"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'AW-XXXXXXXX');
-    function trackConversion() { gtag('event', 'conversion', {'send_to': 'AW-XXXXXXXX/xxxx'}); }
-  </script>
-  <style>body{font-family:sans-serif;max-width:600px;margin:auto;padding:20px} #chat{border:1px solid #ddd;height:400px;overflow:auto;padding:10px} .ad{margin:15px 0;background:#f5f5f5;padding:10px;text-align:center}</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LinguaBot - يهضر بكل اللغات</title>
+<style>
+body{font-family:system-ui;background:#E5DDD5;margin:0}
+.container{max-width:600px;margin:0 auto;background:white;min-height:100vh;display:flex;flex-direction:column}
+.header{background:#075E54;color:white;padding:15px;text-align:center;font-weight:bold}
+.ads{background:#fff9c4;text-align:center;padding:10px;font-size:12px;color:#888;border:1px dashed #ccc;margin:5px}
+#chat{flex:1;padding:15px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;background:#E5DDD5}
+.user{background:#DCF8C6;align-self:flex-end;padding:10px 14px;border-radius:12px 12px 0 12px;max-width:80%}
+.bot{background:white;align-self:flex-start;padding:10px 14px;border-radius:12px 12px 12px 0;max-width:80%;box-shadow:0 1px 1px rgba(0,0,0,0.1)}
+.input{display:flex;padding:10px;background:#f0f0f0;gap:10px}
+.input input{flex:1;padding:12px;border-radius:20px;border:1px solid #ddd;outline:none}
+.input button{background:#075E54;color:white;border:none;padding:0 25px;border-radius:20px;cursor:pointer;font-weight:bold}
+</style>
 </head>
 <body>
-  <h1>🤖 LinguaBot - كيهضر بݣاع اللغات</h1>
-  <div class="ad"> بلاصة إعلان Google AdSense ديالك - كتخلص عليها </div>
-  <div id="chat"></div>
-  <input id="msg" placeholder="كتب هنا..." style="width:80%"><button onclick="send()">سيفط</button>
-
-  <script>
-    async function send(){
-      const m = document.getElementById('msg').value;
-      document.getElementById('chat').innerHTML += `<p><b>أنت:</b> ${m}</p>`;
-      trackConversion(); // كيحسبها Google Ads
-      const r = await fetch(`/chat?message=${encodeURIComponent(m)}`);
-      const d = await r.json();
-      document.getElementById('chat').innerHTML += `<p><b>البوت:</b> ${d.reply}</p>`;
-      document.getElementById('msg').value='';
-    }
-  </script>
+<div class="container">
+<div class="header">🤖 LinguaBot - كنهضر بأي لغة</div>
+<div class="ads">هنا غادي يبان إعلان Google AdSense ديالك</div>
+<div id="chat"><div class="bot">سلام! أنا LinguaBot 🌍 كنهضر عربية، دارجة، فرنسية، إنجليزية... سولني أي حاجة!</div></div>
+<div class="input">
+<input id="m" placeholder="كتب رسالتك هنا..." onkeydown="if(event.key==='Enter')send()">
+<button onclick="send()">إرسال</button>
+</div>
+<div class="ads">بلاصة إعلان ثانية لـ Google Ads</div>
+</div>
+<script>
+async function send(){
+ let i=document.getElementById('m'); let t=i.value.trim(); if(!t)return;
+ let c=document.getElementById('chat'); c.innerHTML+=`<div class="user">${t}</div>`; i.value=''; c.scrollTop=c.scrollHeight;
+ try{
+  let r=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:t})});
+  let d=await r.json();
+  c.innerHTML+=`<div class="bot">${d.reply}</div>`;
+ }catch(e){ c.innerHTML+=`<div class="bot">عندي مشكل، عاود جرب</div>`; }
+ c.scrollTop=c.scrollHeight;
+}
+</script>
 </body>
 </html>

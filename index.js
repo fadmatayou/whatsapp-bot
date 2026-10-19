@@ -9,21 +9,34 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.post('/chat', async (req, res) => {
   try {
     const key = process.env.GEMINI_API_KEY;
-    if (!key) {
-      return res.json({ reply: "المفتاح GEMINI_API_KEY ما كاينش ف Render، سير لـ Environment وزيدو" });
-    }
-    
+    if (!key) return res.json({ reply: "ما كاينش المفتاح ف Render" });
+
     const genAI = new GoogleGenerativeAI(key);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     
-    const userMessage = req.body.message || "Hi";
-    const result = await model.generateContent(`Reply in same language as user. User says: ${userMessage}`);
-    const reply = result.response.text();
-    
-    res.json({ reply });
+    // جرب الموديل الجديد، إلا ما خدمش جرب القديم
+    let model;
+    try {
+      model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    } catch {
+      model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+    }
+
+    const msg = req.body.message || "سلام";
+    const result = await model.generateContent(`You are LinguaBot. Reply in same language as user. User: ${msg}`);
+    const text = result.response.text();
+    res.json({ reply: text });
+
   } catch (e) {
-    console.log("REAL ERROR:", e.message);
-    res.json({ reply: "Error حقيقي: " + e.message });
+    console.error(e);
+    // إلا بقا مشكل جرب موديل تالت
+    try {
+      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+      const model2 = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+      const result = await model2.generateContent(req.body.message);
+      return res.json({ reply: result.response.text() });
+    } catch (e2) {
+      res.json({ reply: "Error: " + e2.message });
+    }
   }
 });
 

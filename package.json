@@ -1,5 +1,5 @@
 {
-  "name": "linguabot",
+  "name": "my-website",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -7,7 +7,6 @@
   },
   "dependencies": {
     "express": "^4.18.2",
-    "openai": "^4.20.0",
-    "cors": "^2.8.5"
+    "@google/generative-ai": "^0.17.0"
   }
 }

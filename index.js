@@ -6,30 +6,24 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-app.post('/api/chat', async (req, res) => {
-  try {
-    const userMessage = req.body.message || req.body.text || "";
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const result = await model.generateContent(userMessage);
-    const reply = result.response.text();
-    res.json({ reply: reply });
-  } catch (error) {
-    console.log(error);
-    res.json({ reply: "عندي شوية ضغط دابا، عاود سولني" });
-  }
-});
-
-// باش يخدم حتى إلا الفرونت كيعيط على /chat
 app.post('/chat', async (req, res) => {
   try {
-    const userMessage = req.body.message || req.body.text || "";
+    const key = process.env.GEMINI_API_KEY;
+    if (!key) {
+      return res.json({ reply: "المفتاح GEMINI_API_KEY ما كاينش ف Render، سير لـ Environment وزيدو" });
+    }
+    
+    const genAI = new GoogleGenerativeAI(key);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const result = await model.generateContent(userMessage);
-    res.json({ reply: result.response.text() });
+    
+    const userMessage = req.body.message || "Hi";
+    const result = await model.generateContent(`Reply in same language as user. User says: ${userMessage}`);
+    const reply = result.response.text();
+    
+    res.json({ reply });
   } catch (e) {
-    res.json({ reply: "عندي شوية ضغط دابا، عاود سولني" });
+    console.log("REAL ERROR:", e.message);
+    res.json({ reply: "Error حقيقي: " + e.message });
   }
 });
 
@@ -38,4 +32,4 @@ app.get('/', (req, res) => {
 });
 
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log("LinguaBot خدام على البورت " + PORT));
+app.listen(PORT, () => console.log("Live"));

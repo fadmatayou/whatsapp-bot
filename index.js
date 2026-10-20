@@ -7,9 +7,9 @@ const app = express()
 let qrCodeData = null
 let isConnected = false
 
-// Gemini - موديل جديد
+// Gemini - موديل جديد 2026
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
+const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" })
 
 app.get('/', async (req, res) => {
   if (isConnected) {
@@ -72,7 +72,6 @@ async function startBot() {
     } catch (e) {
       console.log('FULL ERROR:', e)
       try {
-        // دابا غادي يوريك الخطأ الحقيقي فالواتساب
         await sock.sendMessage(m.messages[0].key.remoteJid, { text: "الخطأ الحقيقي هو: " + e.message })
       } catch {}
     }

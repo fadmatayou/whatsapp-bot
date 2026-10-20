@@ -13,13 +13,8 @@ app.post('/chat', async (req, res) => {
 
     const genAI = new GoogleGenerativeAI(key);
     
-    // جرب الموديل الجديد، إلا ما خدمش جرب القديم
-    let model;
-    try {
-      model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-    } catch {
-      model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
-    }
+    // تم التصحيح - موديل جديد خدام
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const msg = req.body.message || "سلام";
     const result = await model.generateContent(`You are LinguaBot. Reply in same language as user. User: ${msg}`);
@@ -28,15 +23,7 @@ app.post('/chat', async (req, res) => {
 
   } catch (e) {
     console.error(e);
-    // إلا بقا مشكل جرب موديل تالت
-    try {
-      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-      const model2 = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
-      const result = await model2.generateContent(req.body.message);
-      return res.json({ reply: result.response.text() });
-    } catch (e2) {
-      res.json({ reply: "Error: " + e2.message });
-    }
+    res.json({ reply: "Error: " + e.message });
   }
 });
 

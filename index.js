@@ -7,9 +7,9 @@ const app = express()
 let qrCodeData = null
 let isConnected = false
 
-// Gemini
+// Gemini - موديل جديد
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
 
 app.get('/', async (req, res) => {
   if (isConnected) {
@@ -70,9 +70,10 @@ async function startBot() {
       await sock.sendMessage(msg.key.remoteJid, { text: reply })
 
     } catch (e) {
-      console.log('Error:', e.message)
+      console.log('FULL ERROR:', e)
       try {
-        await sock.sendMessage(m.messages[0].key.remoteJid, { text: "آسف، وقع مشكل صغير، عاود سولني دابا!" })
+        // دابا غادي يوريك الخطأ الحقيقي فالواتساب
+        await sock.sendMessage(m.messages[0].key.remoteJid, { text: "الخطأ الحقيقي هو: " + e.message })
       } catch {}
     }
   })
